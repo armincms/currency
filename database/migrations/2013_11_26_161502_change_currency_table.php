@@ -20,11 +20,11 @@ class ChangeCurrencyTable extends Migration
         Currency::where('decimal', 0)->update(['decimal' => 2]);
 
         Currency::get()->map(function($currency) {
-            preg_match('/.([0-9]+)/', $currency->format, $matches);
-
-            if(strlen($matches[0]) !== 2) { 
+            preg_match('/\.([0-9]+)/', $currency->format, $matches); 
+            
+            if(isset($matches[1]) && strlen($matches[1]) !== 2) { 
                 $currency->forceFill([
-                    'decimal' => strlen($matches[0])
+                    'decimal' => strlen($matches[1])
                 ]);
 
                 $currency->save(); 
