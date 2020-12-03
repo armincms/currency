@@ -16,6 +16,20 @@ class ChangeCurrencyTable extends Migration
         Schema::table('currencies', function ($table) { 
             $table->tinyInteger('decimal')->default(0); 
         }); 
+
+        Currency::where('decimal', 0)->update(['decimal' => 2]);
+
+        Currency::get()->map(function($currency) {
+            preg_match('/.([0-9]+)/', $currency->format, $matches);
+
+            if(strlen($matches[0]) !== 2) { 
+                $currency->forceFill([
+                    'decimal' => strlen($matches[0])
+                ]);
+
+                $currency->save(); 
+            }
+        });
     }
 
     /**
