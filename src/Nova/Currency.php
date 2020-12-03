@@ -2,11 +2,10 @@
 
 namespace Armincms\Currency\Nova;
 
-use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Fields\Boolean;
+use Illuminate\Support\Str; 
 use Illuminate\Http\Request; 
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Fields\{ID, Text, Number, Boolean};
 
 class Currency extends Resource
 {
@@ -54,11 +53,16 @@ class Currency extends Resource
 
             Text::make(__('Symbol'), 'symbol')
                 ->sortable()
-                ->required(),
+                ->required(), 
 
-            Text::make(__('Format'), 'format')
-                ->sortable()
-                ->required(),
+            Number::make(__('Minor Unit'), 'decimal')
+                ->required()
+                ->rules('required', 'min:0')
+                ->min(0), 
+
+            Text::make(__('Example 50000.500500'), function() {
+                return currency()->format(50000.500500, $this->code);
+            }),
 
             Text::make(__('Exchange Rate'), 'exchange_rate')
                 ->withMeta([
